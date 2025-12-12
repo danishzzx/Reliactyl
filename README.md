@@ -121,6 +121,20 @@ Reliactyl comes packed with amazing features to enhance your Pterodactyl experie
 
 ---
 
+## 💸 Support the Project
+
+If you find this project helpful and want to support its development, you can donate via crypto:
+
+| Currency | Address |
+| :--- | :--- |
+| **LTC (Litecoin)** | `LLy9cDwo6N2gGjsM2XwUg8Sb2FGYi3vmgX` |
+| **BTC (Bitcoin)** | `bc1qa0rr2ruuw0ygpmwwvg5kchlywwfxxpa7j0sxk4` |
+| **ETH (Ethereum)** | `0xb9F168D0d2b1cD9B838d918583Bdbc2a813e35Ef` |
+
+> *All addresses are on their respective mainnets.*
+
+---
+
 ## 🤝 Support & Credits
 
 - **Developer**: [Danish](https://danishfolio.cc)
