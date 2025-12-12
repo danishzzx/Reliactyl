@@ -1,0 +1,209 @@
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= settings.name %></title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="/assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/assets/vendors/css/vendor.bundle.base.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nanobar/0.4.2/nanobar.js"></script>
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="/assets/vendors/jvectormap/jquery-jvectormap.css">
+    <link rel="stylesheet" href="/assets/vendors/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet" href="/assets/vendors/owl-carousel-2/owl.carousel.min.css">
+    <link rel="stylesheet" href="/assets/vendors/owl-carousel-2/owl.theme.default.min.css">
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="https://cdn.discordapp.com/attachments/881207010417315861/948924037176901642/Copy_of_H_33.png" />
+    <link rel="icon" type="image/png" href="<%= extra.faviconlink %>">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --background: #09090b;
+            --card: #09090b;
+            --card-foreground: #fafafa;
+            --primary: #fafafa;
+            --primary-foreground: #18181b;
+            --muted: #27272a;
+            --muted-foreground: #a1a1aa;
+            --border: #27272a;
+            --radius: 0.5rem;
+            --sidebar-width: 260px;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif !important;
+            background-color: var(--background) !important;
+            color: var(--card-foreground) !important;
+        }
+
+        /* RESET / LAYOUT OVERRIDES */
+        .container-scroller {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .page-body-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 0 !important; /* Remove topnav spacing */
+            margin-left: var(--sidebar-width); /* Push content right */
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-panel {
+            flex: 1;
+            background-color: var(--background) !important;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-wrapper {
+            background: var(--background) !important;
+            padding: 2rem !important;
+            flex: 1;
+        }
+
+        /* SIDEBAR OVERRIDES */
+        .sidebar {
+            width: var(--sidebar-width) !important;
+            position: fixed !important;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: var(--background) !important;
+            border-right: 1px solid var(--border);
+            z-index: 1000;
+            display: flex !important;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        /* Mobile Sidebar */
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .page-body-wrapper {
+                margin-left: 0;
+            }
+        }
+
+        /* COMPONENT STYLES */
+        .card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            color: var(--card-foreground);
+            border-radius: var(--radius);
+        }
+        
+        .footer {
+            background-color: var(--background) !important;
+            border-top: 1px solid var(--border);
+            color: var(--muted-foreground) !important;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--card-foreground) !important;
+        }
+        
+        .text-gray, .text-muted {
+            color: var(--muted-foreground) !important;
+        }
+
+        /* Button Overrides */
+        .btn {
+            border-radius: calc(var(--radius) - 2px);
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--primary-foreground) !important;
+        }
+        
+        .btn-primary:hover {
+            background-color: #e4e4e7 !important;
+            border-color: #e4e4e7 !important;
+        }
+
+        .btn-outline-secondary {
+            border-color: var(--border);
+            color: var(--muted-foreground);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--muted);
+            color: var(--card-foreground);
+        }
+
+        /* Form Controls */
+        .form-control {
+            background-color: var(--background) !important;
+            border: 1px solid var(--border) !important;
+            color: var(--card-foreground) !important;
+            border-radius: calc(var(--radius) - 2px);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 1px var(--primary);
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 999;
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            color: var(--card-foreground);
+            cursor: pointer;
+        }
+
+        @media (max-width: 991px) {
+            .mobile-toggle {
+                display: block;
+            }
+            .content-wrapper {
+                padding-top: 4rem !important;
+            }
+        }
+        
+        /* Utility */
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+
+    <% if (settings.api.arcio.enabled == true) { %>
+         <script>Arc looks a little ugly, so it's now disabled in v12.3.0</script>
+    <% } %>
+</head>
+<body style="font-family: 'Inter', sans-serif;">
+<div class="nanobar my-class" id="my-id" style="position: fixed;">
+    <div class="bar"></div>
+</div>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./components/head') %>
+  <body>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+        <i class="mdi mdi-menu"></i>
+    </button>
+
+    <div class="container-scroller">
+      <%- include('./components/sidebar') %>
+      <div class="container-fluid page-body-wrapper">
+        <div class="main-panel">
+          <div class="content-wrapper">
+            
+            <!-- Header -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                <div>
+                    <h2 class="mb-1" style="font-weight: 700; letter-spacing: -0.025em; font-size: 1.8rem;">Deploy Server</h2>
+                    <p class="text-gray mb-0">Launch a new server instance instantly.</p>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <% if (req.query.err) { %>
+            <div class="alert fade show mb-4" role="alert" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: var(--radius);">
+                <div class="d-flex align-items-center">
+                    <i class="mdi mdi-alert-circle mr-2" style="font-size: 1.25rem;"></i>
+                    <span>
+                        <% if (req.query.err == "MISSINGVARIABLE") { %>
+                            You have not filled out all of the server information.
+                        <% } else if (req.query.err == "NOTANUMBER") { %>
+                            RAM, disk and CPU must be a number.
+                        <% } else if (req.query.err == "ERRORONCREATE") { %>
+                            An error was reported by the Panel while attempting to create the server.
+                        <% } else if (req.query.err == "BIGSERVERNAME") { %>
+                            Your server name must be less than <b>191</b> characters.
+                        <% } else if (req.query.err == "TOOMUCHSERVERS") { %>
+                            Too many servers!
+                        <% } else if (req.query.err == "PREMIUMLOCATION") { %>
+                            Please select a location.
+                        <% } else if (req.query.err == "TOOLITTLECOINS") { %>
+                            You do not have enough coins to create a server.
+                        <% } else if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
+                            You must complete the captcha to prove you are human!
+                        <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
+                            You submitted an invalid captcha response, try again.
+                        <% } else { %>
+                            <% if (req.query.num) { %>
+                                <% if (!isNaN(parseFloat(req.query.num))) { %>
+                                    <% if (req.query.err == "TOOLITTLERAM" || req.query.err == "TOOLITTLEDISK" || req.query.err == "TOOLITTLECPU") { %>
+                                        You must make a server with at least <b><%= req.query.num %></b>
+                                        <% if (req.query.err.slice(-3) == "RAM") { %>
+                                            MB RAM
+                                        <% } else if (req.query.err.slice(-4) == "DISK") { %>
+                                            MB disk
+                                        <% } else { // CPU %>
+                                            % CPU
+                                        <% } %>
+                                        to use the selected server type.
+                                    <% } else if (req.query.err == "TOOMUCHRAM" || req.query.err == "TOOMUCHDISK" || req.query.err == "TOOMUCHCPU") { %>
+                                        With the selected server type, you can have a maximum of <b><%= req.query.num %></b>
+                                        <% if (req.query.err.slice(-3) == "RAM") { %>
+                                            MB RAM
+                                        <% } else if (req.query.err.slice(-4) == "DISK") { %>
+                                            MB disk
+                                        <% } else { // CPU %>
+                                            % CPU
+                                        <% } %>
+                                        on the server.
+                                    <% } else if (req.query.err == "EXCEEDRAM" || req.query.err == "EXCEEDDISK" || req.query.err == "EXCEEDCPU") { %>
+                                        You don't have enough resources to make this server.
+                                    <% } else { %>
+                                        An unknown error occurred.
+                                    <% } %>
+                                <% } else { %>
+                                    An unknown error occurred.
+                                <% } %>
+                            <% } else { %>
+                                An unknown error occurred.
+                            <% } %>
+                        <% } %>
+                    </span>
+                </div>
+            </div>
+            <% } %>
+
+            <div class="row">
+              <div class="col-md-12 grid-margin stretch-card">
+                <div class="card" style="border: 1px solid var(--border);">
+                  <div class="card-body">
+                    <form class="forms-sample">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-4">
+                                    <label for="InputName" style="color: var(--muted-foreground); font-weight: 500;">Server Name</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="background: var(--muted); border-color: var(--border); color: var(--muted-foreground);"><i class="mdi mdi-format-title"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="InputName" placeholder="My Awesome Server" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-4">
+                                    <label for="InputEgg" style="color: var(--muted-foreground); font-weight: 500;">Software / Egg</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="background: var(--muted); border-color: var(--border); color: var(--muted-foreground);"><i class="mdi mdi-egg"></i></span>
+                                        </div>
+                                        <select class="form-control" id="InputEgg" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                                            <% for (let [name, value] of Object.entries(settings.api.client.eggs)) { %>
+                                                <option value="<%= name %>"><%= value.display %></option>
+                                            <% } %>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-4">
+                                    <label for="InputCPU" style="color: var(--muted-foreground); font-weight: 500;">CPU Limit (Cores)</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="background: var(--muted); border-color: var(--border); color: var(--muted-foreground);"><i class="mdi mdi-cpu-64-bit"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control" id="InputCPU" placeholder="1" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-4">
+                                    <label for="InputRAM" style="color: var(--muted-foreground); font-weight: 500;">RAM Limit (<% if (settings.resources.type == "GB") { %>GB<% } else { %>MB<% } %>)</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="background: var(--muted); border-color: var(--border); color: var(--muted-foreground);"><i class="mdi mdi-memory"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control" id="InputRAM" placeholder="<% if (settings.resources.type == "GB") { %>2<% } else { %>2048<% } %>" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-4">
+                                    <label for="InputDisk" style="color: var(--muted-foreground); font-weight: 500;">Disk Limit (<% if (settings.resources.type == "GB") { %>GB<% } else { %>MB<% } %>)</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" style="background: var(--muted); border-color: var(--border); color: var(--muted-foreground);"><i class="mdi mdi-harddisk"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control" id="InputDisk" placeholder="<% if (settings.resources.type == "GB") { %>40<% } else { %>40960<% } %>" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-5">
+                            <label for="InputLoc" style="color: var(--muted-foreground); font-weight: 500;">Location</label>
+                            <div class="row">
+                                <% for (let [name, value] of Object.entries(settings.api.client.locations)) { %>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="custom-control custom-radio image-checkbox">
+                                            <input type="radio" class="custom-control-input" id="loc_<%= name %>" name="location" value="<%= name %>">
+                                            <label class="custom-control-label d-block border rounded p-3" for="loc_<%= name %>" style="cursor: pointer; border-color: var(--border) !important; background: var(--background);">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flag-icon mr-3">
+                                                        <i class="mdi mdi-earth" style="font-size: 1.5rem; color: var(--muted-foreground);"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-0" style="color: var(--card-foreground);"><%= value.name %></h6>
+                                                        <small class="text-muted"><%= value.iso || 'Global' %></small>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <!-- Fallback Select if needed, but styling radio cards is better -->
+                            <select class="form-control d-none" id="InputLoc">
+                                <% for (let [name, value] of Object.entries(settings.api.client.locations)) { %>
+                                    <option value="<%= name %>"><%= value.name %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                      
+                      <div class="d-flex justify-content-end">
+                        <a role="button" id="create-btn" class="btn btn-primary btn-lg d-flex align-items-center" href="javascript: submitNew()" onclick="this.classList.toggle('disabled')" style="padding-left: 2rem; padding-right: 2rem;">
+                            <i class="mdi mdi-rocket-launch mr-2"></i>
+                            <span>
+                                Deploy Server 
+                                <% if (settings.servercreation.cost > 0) { %>
+                                    (<%= settings.servercreation.cost %> coins)
+                                <% } %>
+                            </span>
+                        </a>
+                      </div>
+                      
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+          <%- include('./components/footer') %>
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="../../assets/vendors/select2/select2.min.js"></script>
+    <script src="../../assets/vendors/typeahead.js/typeahead.bundle.min.js"></script>
+    <script>
+      // Sync radio buttons with hidden select
+      document.querySelectorAll('input[name="location"]').forEach((elem) => {
+        elem.addEventListener("change", function(event) {
+          document.getElementById("InputLoc").value = event.target.value;
+        });
+      });
+
+      async function submitNew() {
+        let name = encodeURIComponent(document.getElementById("InputName").value);
+        let egg = encodeURIComponent(document.getElementById("InputEgg").value);
+        <% if (settings.resources.type == "GB") { %>
+          let ram = encodeURIComponent(document.getElementById("InputRAM").value * 1024);
+          let disk = encodeURIComponent(document.getElementById("InputDisk").value * 1024);
+        <% } else { %>
+          let ram = encodeURIComponent(document.getElementById("InputRAM").value);
+          let disk = encodeURIComponent(document.getElementById("InputDisk").value);
+        <% } %>
+        let cpu = encodeURIComponent(document.getElementById("InputCPU").value * 100);
+        let location = encodeURIComponent(document.getElementById("InputLoc").value);
+        document.location.href = `/create?name=${name}&egg=${egg}&ram=${ram}&disk=${disk}&cpu=${cpu}&location=${location}`;
+      };
+    </script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="/assets/js/off-canvas.js"></script>
+    <script src="/assets/js/hoverable-collapse.js"></script>
+    <script src="/assets/js/misc.js"></script>
+    <script src="/assets/js/settings.js"></script>
+    <script src="/assets/js/todolist.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="/assets/js/file-upload.js"></script>
+    <script src="/assets/js/typeahead.js"></script>
+    <script src="/assets/js/select2.js"></script>
+    
+    <style>
+        /* Custom Radio Button Styling */
+        .custom-control-input:checked ~ .custom-control-label {
+            border-color: var(--primary) !important;
+            background-color: var(--muted) !important;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+            color: var(--card-foreground);
+        }
+        
+        /* Input Group Text */
+        .input-group-text {
+            border: 1px solid var(--border);
+        }
+        
+        .form-control {
+            border: 1px solid var(--border);
+        }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,120 @@
+<nav class="navbar p-0 fixed-top d-flex flex-row">
+    <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+      <a class="navbar-brand brand-logo-mini text-white" href="../dashboard" style="font-weight: 700; font-family: 'Inter', sans-serif;"><%= settings.letter %></a>
+    </div>
+    <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+      <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize" style="color: var(--card-foreground);">
+        <span class="mdi mdi-menu"></span>
+      </button>
+      
+      <ul class="navbar-nav navbar-nav-right">
+        <!-- Balance Badge -->
+        <li class="nav-item d-none d-sm-flex">
+            <div class="nav-link" style="cursor: default;">
+                <span class="badge" style="background: var(--muted); color: var(--card-foreground); border: 1px solid var(--border); padding: 8px 12px; font-weight: 500; font-size: 0.85rem;">
+                    <i class="mdi mdi-wallet-outline mr-1"></i> <span id="balance">0.00</span> Coins
+                </span>
+            </div>
+        </li>
+
+        <!-- User Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+            <div class="navbar-profile d-flex align-items-center">
+              <img class="img-xs rounded-circle" src="https://cdn.discordapp.com/avatars/<%= userinfo.id %>/<%= userinfo.avatar %>.png?size=256" alt="" style="width: 32px; height: 32px; border: 1px solid var(--border);">
+              <p class="mb-0 d-none d-sm-block navbar-profile-name ml-2" style="color: var(--card-foreground); font-weight: 500; font-size: 0.9rem;"><%= userinfo.username %></p>
+              <i class="mdi mdi-chevron-down d-none d-sm-block ml-1" style="color: var(--muted-foreground);"></i>
+            </div>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+            <div class="dropdown-header text-center">
+                <p class="mb-0 font-weight-medium" style="color: var(--card-foreground);"><%= userinfo.username %></p>
+                <p class="mb-0 text-small" style="color: var(--muted-foreground);">#<%= req.session.userinfo.discriminator %></p>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/dashboard">
+                <i class="mdi mdi-view-dashboard mr-2 text-primary"></i> Dashboard
+            </a>
+            <a class="dropdown-item" href="/settings">
+                <i class="mdi mdi-cog mr-2 text-primary"></i> Settings
+            </a>
+            <div class="dropdown-divider"></div>
+            <div class="px-3 py-2">
+                <p class="text-small text-muted mb-1">Current Plan</p>
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="font-weight-bold" style="color: var(--card-foreground);">
+                        <% if (typeof packagename.charAt(0) == 'number') { %>
+                            <%= packagename %>
+                        <% } else { %>
+                            <%= packagename.charAt(0).toUpperCase() + packagename.slice(1) %>
+                        <% } %>
+                    </span>
+                    <i class="mdi mdi-star-circle text-warning"></i>
+                </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+      
+      <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas" style="color: var(--card-foreground);">
+        <span class="mdi mdi-menu"></span>
+      </button>
+    </div>
+</nav>
+
+<script>
+    let balance = document.getElementById("balance")
+    balance.textContent = Math.floor(<%= coins %> * 100) / 100
+</script>
+
+<style>
+/* Navbar Refinements */
+.navbar {
+    background-color: var(--background) !important;
+    border-bottom: 1px solid var(--border);
+    box-shadow: none !important;
+}
+
+.navbar .navbar-brand-wrapper {
+    background-color: var(--background) !important;
+    border-right: none;
+}
+
+.navbar .navbar-menu-wrapper {
+    background-color: var(--background) !important;
+    color: var(--card-foreground);
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Dropdown Styling */
+.dropdown-menu {
+    background-color: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-top: 10px;
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    color: var(--card-foreground) !important;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.15s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--muted) !important;
+    color: var(--card-foreground) !important;
+}
+
+.dropdown-divider {
+    border-top: 1px solid var(--border) !important;
+    margin: 0.5rem 0;
+}
+
+.dropdown-header {
+    padding: 0.5rem 1rem;
+}
+</style>

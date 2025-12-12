@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./components/head') %>
+  <body>
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+        <i class="mdi mdi-menu"></i>
+    </button>
+
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.html -->
+      <%- include('./components/adminsidebar') %>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+           
+           <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                <div>
+                    <h2 class="mb-1" style="font-weight: 700; letter-spacing: -0.025em; font-size: 1.8rem;">Resource Manager</h2>
+                    <p class="text-gray mb-0">Manually modify user resources.</p>
+                </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 grid-margin stretch-card">
+                <div class="card" style="background: var(--card); border: 1px solid var(--border);">
+                  <div class="card-body">
+                    <h4 class="card-title mb-4">Set Resources (Overwrite)</h4>
+                    <form class="forms-sample">
+                      <div class="form-group mb-3">
+                        <label for="IDSet" style="color: var(--muted-foreground);">Discord ID</label>
+                        <input type="number" class="form-control" placeholder="Enter user ID" id="IDSet" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                      </div>
+                      <div class="row">
+                          <div class="col-6 mb-3">
+                             <label for="SetCPU" style="color: var(--muted-foreground);">CPU (Cores)</label>
+                             <input type="number" class="form-control" placeholder="1" id="SetCPU" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          </div>
+                          <div class="col-6 mb-3">
+                             <label for="SetRAM" style="color: var(--muted-foreground);">RAM (GB)</label>
+                             <input type="number" class="form-control" placeholder="2" id="SetRAM" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          </div>
+                          <div class="col-6 mb-3">
+                             <label for="SetDisk" style="color: var(--muted-foreground);">Disk (GB)</label>
+                             <input type="number" class="form-control" placeholder="10" id="SetDisk" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          </div>
+                          <div class="col-6 mb-3">
+                             <label for="SetServers" style="color: var(--muted-foreground);">Servers</label>
+                             <input type="number" class="form-control" placeholder="1" id="SetServers" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          </div>
+                      </div>
+                      <a role="button" class="btn btn-warning btn-block" href="javascript: submitSet()">Set Resources</a>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 grid-margin stretch-card">
+                <div class="card" style="background: var(--card); border: 1px solid var(--border);">
+                  <div class="card-body">
+                    <h4 class="card-title mb-4">Add Resources (Append)</h4>
+                    <form class="forms-sample">
+                      <div class="form-group mb-3">
+                        <label for="IDAdd" style="color: var(--muted-foreground);">Discord ID</label>
+                        <input type="number" class="form-control" placeholder="Enter user ID" id="IDAdd" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                      </div>
+                      <div class="row">
+                          <div class="col-6 mb-3">
+                             <label for="AddCPU" style="color: var(--muted-foreground);">CPU (Cores)</label>
+                             <input type="number" class="form-control" placeholder="1" id="AddCPU" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          </div>
+                          <div class="col-6 mb-3">
+                             <label for="AddRAM" style="color: var(--muted-foreground);">RAM (GB)</label>
+                             <input type="number" class="form-control" placeholder="2" id="AddRAM" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          </div>
+                          <div class="col-6 mb-3">
+                             <label for="AddDisk" style="color: var(--muted-foreground);">Disk (GB)</label>
+                             <input type="number" class="form-control" placeholder="10" id="AddDisk" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          </div>
+                          <div class="col-6 mb-3">
+                             <label for="AddServers" style="color: var(--muted-foreground);">Servers</label>
+                             <input type="number" class="form-control" placeholder="1" id="AddServers" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          </div>
+                      </div>
+                      <a role="button" class="btn btn-primary btn-block" href="javascript: submitAdd()">Add Resources</a>
+                    </form>
+                  </div>
+                </div>
+              </div>
+          </div>
+          </div>
+          <!-- content-wrapper ends -->
+          <%- include('./components/footer') %>
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <script src="/assets/vendors/select2/select2.min.js"></script>
+    <script src="/assets/vendors/typeahead.js/typeahead.bundle.min.js"></script>
+    <script>
+        async function submitSet() {
+            let id = encodeURIComponent(document.getElementById("IDSet").value);
+            let cpu = encodeURIComponent(document.getElementById("SetCPU").value * 100);
+            let ram = encodeURIComponent(document.getElementById("SetRAM").value * 1024);
+            let disk = encodeURIComponent(document.getElementById("SetDisk").value * 1024);
+            let servers = encodeURIComponent(document.getElementById("SetServers").value);
+            window.location.href = "/setresources?id=" + id + "&cpu=" + cpu + "&ram=" + ram + "&disk=" + disk + "&servers=" + servers
+        }
+        async function submitAdd() {
+            let id = encodeURIComponent(document.getElementById("IDAdd").value);
+            let cpu = encodeURIComponent(document.getElementById("AddCPU").value * 100);
+            let ram = encodeURIComponent(document.getElementById("AddRAM").value * 1024);
+            let disk = encodeURIComponent(document.getElementById("AddDisk").value * 1024);
+            let servers = encodeURIComponent(document.getElementById("AddServers").value);
+            
+            window.location.href = "/addresources?id=" + id + "&cpu=" + cpu + "&ram=" + ram + "&disk=" + disk + "&servers=" + servers
+        }
+    </script>
+    <%- include('./components/scripts') %>
+    <script src="/assets/js/file-upload.js"></script>
+    <script src="/assets/js/typeahead.js"></script>
+    <script src="/assets/js/select2.js"></script>
+  </body>
+</html>

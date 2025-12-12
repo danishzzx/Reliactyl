@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./components/head') %>
+  <body>
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+        <i class="mdi mdi-menu"></i>
+    </button>
+
+    <div class="container-scroller">
+      <%- include('./components/sidebar') %>
+      <div class="container-fluid page-body-wrapper">
+        <div class="main-panel">
+          <div class="content-wrapper">
+           
+           <!-- Header -->
+           <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                <div>
+                    <h2 class="mb-1" style="font-weight: 700; letter-spacing: -0.025em; font-size: 1.8rem;">Resource Store</h2>
+                    <p class="text-gray mb-0">Expand your server capacity with additional resources.</p>
+                </div>
+           </div>
+
+            <% if (req.query.err) { %>
+              <% if (req.query.err !== "none") { %>
+                <div class="alert fade show mb-4" role="alert" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: var(--radius);">
+                  <div class="d-flex align-items-center">
+                    <i class="mdi mdi-alert-circle mr-2"></i>
+                    <span>
+                      <% if (req.query.err == "CANNOTAFFORD") { %>
+                        Insufficient funds to complete this transaction.
+                      <% } else if (req.query.err == "MAXCPUEXCEETED") { %>
+                        You have reached the CPU limit!
+                      <% } else if (req.query.err == "MAXRAMEXCEETED") { %>
+                        You have reached the RAM limit!
+                      <% } else if (req.query.err == "MAXDISKEXCEETED") { %>
+                        You have reached the Disk limit!
+                      <% } else if (req.query.err == "MAXSERVERSEXCEETED") { %>
+                        You have reached the Server Slots limit!
+                      <% } %>
+                    </span>
+                  </div>
+                </div>
+              <% } else if (req.query.err == "none") { %>
+                <div class="alert fade show mb-4" role="alert" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #34d399; border-radius: var(--radius);">
+                  <div class="d-flex align-items-center">
+                    <i class="mdi mdi-check-circle mr-2"></i>
+                    <span>Successfully purchased resources!</span>
+                  </div>
+                </div>
+              <% } %>
+            <% } %>
+
+            <div class="row">
+              <!-- CPU -->
+              <div class="col-md-6 col-lg-3 grid-margin stretch-card">
+                <div class="card h-100" style="background: var(--card); border: 1px solid var(--border);">
+                  <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-4">
+                        <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; padding: 12px; border-radius: 12px; margin-right: 15px;">
+                            <i class="mdi mdi-cpu-64-bit" style="font-size: 24px;"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-title mb-0" style="font-size: 1.1rem; font-weight: 600;">CPU Cores</h4>
+                            <small class="text-muted">Processing power</small>
+                        </div>
+                    </div>
+                    
+                    <form action="/buycpu" class="mt-auto">
+                      <div class="form-group mb-4">
+                        <select name="amount" id="cpuAmount" class="form-control" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          <option value=1><%= settings.api.client.coins.store.cpu.per %>% CPU - <%= settings.api.client.coins.store.cpu.cost %> coins</option>
+                          <option value=2><%= settings.api.client.coins.store.cpu.per * 2 %>% CPU - <%= settings.api.client.coins.store.cpu.cost * 2 %> coins</option>
+                        </select>
+                      </div>
+                      <a class="btn btn-primary btn-block w-100" href="javascript: buyCPU()" onclick="this.classList.toggle('button--loading')" style="display: flex; align-items: center; justify-content: center;">
+                        <i class="mdi mdi-cart-outline mr-2"></i> Purchase
+                      </a>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RAM -->
+              <div class="col-md-6 col-lg-3 grid-margin stretch-card">
+                <div class="card h-100" style="background: var(--card); border: 1px solid var(--border);">
+                  <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-4">
+                        <div style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; padding: 12px; border-radius: 12px; margin-right: 15px;">
+                            <i class="mdi mdi-memory" style="font-size: 24px;"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-title mb-0" style="font-size: 1.1rem; font-weight: 600;">Memory</h4>
+                            <small class="text-muted">Server RAM</small>
+                        </div>
+                    </div>
+
+                    <form action="/buyram" class="mt-auto">
+                      <div class="form-group mb-4">
+                        <select id="ramAmount" class="form-control" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          <option value=1><%= settings.api.client.coins.store.ram.per %>MB RAM - <%= settings.api.client.coins.store.ram.cost %> coins</option>
+                          <option value=2><%= settings.api.client.coins.store.ram.per * 2 %>MB RAM - <%= settings.api.client.coins.store.ram.cost * 2 %> coins</option>
+                          <option value=3><%= settings.api.client.coins.store.ram.per * 3 %>MB RAM - <%= settings.api.client.coins.store.ram.cost * 3 %> coins</option>
+                          <option value=4><%= settings.api.client.coins.store.ram.per * 4 %>MB RAM - <%= settings.api.client.coins.store.ram.cost * 4 %> coins</option>
+                        </select>
+                      </div>
+                      <a class="btn btn-primary btn-block w-100" href="javascript: buyRAM()" onclick="this.classList.toggle('button--loading')" style="display: flex; align-items: center; justify-content: center;">
+                        <i class="mdi mdi-cart-outline mr-2"></i> Purchase
+                      </a>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Disk -->
+              <div class="col-md-6 col-lg-3 grid-margin stretch-card">
+                <div class="card h-100" style="background: var(--card); border: 1px solid var(--border);">
+                  <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-4">
+                        <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 12px; border-radius: 12px; margin-right: 15px;">
+                            <i class="mdi mdi-harddisk" style="font-size: 24px;"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-title mb-0" style="font-size: 1.1rem; font-weight: 600;">Disk</h4>
+                            <small class="text-muted">Storage space</small>
+                        </div>
+                    </div>
+
+                    <form action="/buydisk" class="mt-auto">
+                      <div class="form-group mb-4">
+                        <select id="diskAmount" class="form-control" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          <option value=1><%= settings.api.client.coins.store.disk.per %>MB Disk - <%= settings.api.client.coins.store.disk.cost %> coins</option>
+                          <option value=2><%= settings.api.client.coins.store.disk.per * 2 %>MB Disk - <%= settings.api.client.coins.store.disk.cost * 2 %> coins</option>
+                          <option value=3><%= settings.api.client.coins.store.disk.per * 3 %>MB Disk - <%= settings.api.client.coins.store.disk.cost * 3 %> coins</option>
+                          <option value=4><%= settings.api.client.coins.store.disk.per * 4 %>MB Disk - <%= settings.api.client.coins.store.disk.cost * 4 %> coins</option>
+                        </select>
+                      </div>
+                      <a class="btn btn-primary btn-block w-100" href="javascript: buyDisk()" onclick="this.classList.toggle('button--loading')" style="display: flex; align-items: center; justify-content: center;">
+                        <i class="mdi mdi-cart-outline mr-2"></i> Purchase
+                      </a>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Servers -->
+              <div class="col-md-6 col-lg-3 grid-margin stretch-card">
+                <div class="card h-100" style="background: var(--card); border: 1px solid var(--border);">
+                  <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-4">
+                        <div style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; padding: 12px; border-radius: 12px; margin-right: 15px;">
+                            <i class="mdi mdi-server-network" style="font-size: 24px;"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-title mb-0" style="font-size: 1.1rem; font-weight: 600;">Slots</h4>
+                            <small class="text-muted">Server limit</small>
+                        </div>
+                    </div>
+
+                    <form action="/buyservers" class="mt-auto">
+                      <div class="form-group mb-4">
+                        <select id="serversAmount" class="form-control" style="background: var(--background); border-color: var(--border); color: var(--card-foreground);">
+                          <option value=1><%= settings.api.client.coins.store.servers.per %> Server - <%= settings.api.client.coins.store.servers.cost %> coins</option>
+                          <option value=2><%= settings.api.client.coins.store.servers.per * 2 %> Servers - <%= settings.api.client.coins.store.servers.cost * 2 %> coins</option>
+                          <option value=3><%= settings.api.client.coins.store.servers.per * 3 %> Servers - <%= settings.api.client.coins.store.servers.cost * 3 %> coins</option>
+                        </select>
+                      </div>
+                      <a class="btn btn-primary btn-block w-100" href="javascript: buyServers()" onclick="this.classList.toggle('button--loading')" style="display: flex; align-items: center; justify-content: center;">
+                        <i class="mdi mdi-cart-outline mr-2"></i> Purchase
+                      </a>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <%- include('./components/footer') %>
+        </div>
+      </div>
+    </div>
+    
+    <script src="/assets/vendors/select2/select2.min.js"></script>
+    <script src="/assets/vendors/typeahead.js/typeahead.bundle.min.js"></script>
+    <script>
+      async function buyCPU() {
+        let cpu = encodeURIComponent(document.getElementById("cpuAmount").value);
+        document.location.href = `/buycpu?amount=${cpu}`;
+      };
+
+      async function buyRAM() {
+        let ram = encodeURIComponent(document.getElementById("ramAmount").value);
+        document.location.href = `/buyram?amount=${ram}`;
+      };
+
+      async function buyDisk() {
+        let disk = encodeURIComponent(document.getElementById("diskAmount").value);
+        document.location.href = `/buydisk?amount=${disk}`;
+      };
+
+      async function buyServers() {
+        let servers = encodeURIComponent(document.getElementById("serversAmount").value);
+        document.location.href = `/buyservers?amount=${servers}`;
+      };
+    </script>
+    <%- include('./components/scripts') %>
+    <script src="/assets/js/file-upload.js"></script>
+    <script src="/assets/js/typeahead.js"></script>
+    <script src="/assets/js/select2.js"></script>
+  </body>
+</html>

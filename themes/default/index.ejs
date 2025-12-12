@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./components/head') %>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --background: #09090b;
+        --card: #09090b;
+        --card-foreground: #fafafa;
+        --primary: #fafafa;
+        --primary-foreground: #18181b;
+        --muted: #27272a;
+        --muted-foreground: #a1a1aa;
+        --border: #27272a;
+        --radius: 0.75rem;
+    }
+
+    body {
+        background-color: var(--background) !important;
+        font-family: 'Inter', sans-serif !important;
+        color: var(--card-foreground) !important;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    /* Override default styles */
+    .container-scroller, .page-body-wrapper, .content-wrapper {
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: transparent !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 480px; /* Increased width */
+        padding: 20px;
+        perspective: 1000px;
+    }
+
+    .login-card {
+        background-color: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 3rem 2.5rem; /* Increased padding */
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        opacity: 0;
+        animation: cardEntry 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .brand-logo {
+        font-size: 32px; /* Larger logo */
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        color: var(--card-foreground);
+        letter-spacing: -0.025em;
+        background: linear-gradient(to bottom right, #ffffff, #a1a1aa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle {
+        color: var(--muted-foreground);
+        font-size: 1rem;
+        margin-bottom: 2.5rem;
+        line-height: 1.5;
+    }
+
+    .btn-login {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 3rem; /* Larger button height */
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        background-color: var(--primary);
+        color: var(--primary-foreground) !important;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border-radius: calc(var(--radius) - 2px);
+        text-decoration: none;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Force text color to override external styles */
+    .btn-login .button__text {
+        color: var(--primary-foreground) !important;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-login:hover {
+        background-color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        text-decoration: none;
+    }
+
+    .btn-login:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        background-color: transparent;
+        border: 1px solid var(--border);
+        color: var(--card-foreground) !important;
+        margin-top: 12px;
+    }
+    
+    .btn-secondary .button__text, .btn-secondary {
+        color: var(--card-foreground) !important;
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--muted);
+        color: var(--card-foreground) !important;
+        box-shadow: none;
+    }
+
+    /* Animations */
+    @keyframes cardEntry {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* Loading Spinner Override */
+    .button--loading .button__text {
+        visibility: hidden;
+        opacity: 0;
+    }
+    
+    .button--loading::after {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        border: 2px solid transparent;
+        border-top-color: var(--primary-foreground); /* Ensure spinner is dark */
+        border-radius: 50%;
+        animation: button-loading-spinner 0.8s ease infinite;
+    }
+    
+    /* Footer */
+    .footer-text {
+        margin-top: 2.5rem;
+        font-size: 0.8rem;
+        color: var(--muted-foreground);
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    
+    .footer-text:hover {
+        opacity: 1;
+    }
+
+    @keyframes button-loading-spinner {
+        from { transform: rotate(0turn); }
+        to { transform: rotate(1turn); }
+    }
+</style>
+
+<body>
+    <div class="container-scroller">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="brand-logo"><%= settings.name %></div>
+                <p class="brand-subtitle">Welcome back. Enter your credentials to access your server dashboard.</p>
+
+                <% if (!req.session.userinfo) { %>
+                    <a role="button" class="btn-login" href="<%= extra.home.buttontext.loggedout.link %>" onclick="this.classList.toggle('button--loading')">
+                        <span class="button__text">Login with Discord</span>
+                    </a>
+                <% } else { %>
+                    <div style="text-align: center; margin-bottom: 2rem; animation: fadeIn 0.5s ease-out;">
+                        <div style="position: relative; display: inline-block;">
+                            <img src="https://cdn.discordapp.com/avatars/<%= req.session.userinfo.id %>/<%= req.session.userinfo.avatar %>.png" 
+                                 style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--border); padding: 2px;">
+                        </div>
+                        <div style="font-weight: 600; font-size: 1.1rem; margin-top: 1rem;"><%= req.session.userinfo.username %></div>
+                        <div style="color: var(--muted-foreground); font-size: 0.9rem;">#<%= req.session.userinfo.discriminator %></div>
+                    </div>
+
+                    <a role="button" class="btn-login" href="<%= extra.home.buttontext.loggedin.link %>">
+                        <span class="button__text">Go to Dashboard</span>
+                    </a>
+                    <a role="button" class="btn-login btn-secondary" href="<%= extra.home.buttontext.loggedout.link %>">
+                        <span class="button__text">Login with different account</span>
+                    </a>
+                <% } %>
+                
+                <div class="footer-text">
+                    &copy; <%= new Date().getFullYear() %> <%= settings.name %>. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <%- include('./components/scripts') %>
+</body>
+</html>
